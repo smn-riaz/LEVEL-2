@@ -1,0 +1,36 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const app = (0, express_1.default)();
+const port = 3000;
+//parser
+app.use(express_1.default.json());
+app.use(express_1.default.text());
+const logger = (req, res, next) => {
+    // console.log(req.url, req.method, req.hostname)
+    next();
+};
+app.get('/', logger, (req, res) => {
+    res.send('Hello World from Shahman Riaz');
+});
+app.post('/', (req, res) => {
+    // console.log(req.body);
+    res.json({
+        message: "Successfully recieved data"
+    });
+});
+app.get("/:userId/:subId", (req, res) => {
+    console.log(req.params);
+    res.json({
+        user: req.params.userId,
+        dev: req.params.subId
+    });
+});
+app.get("/", (req, res) => {
+    console.log(req.query);
+    res.json();
+});
+exports.default = app;
