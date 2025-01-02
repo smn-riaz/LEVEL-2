@@ -36,28 +36,31 @@ const localGuardianValidationSchema = z.object({
 });
 
 // Student ValidationSchema
-const studentValidationSchema = z.object({
-  id: z.string().nonempty('Student ID is required'),
-  password:z.string().max(20),
-  name: userNameValidationSchema,
-  gender: z.enum(['male', 'female','other'], { errorMap: () => ({ message: 'Gender must be either "male" or "female"' }) }),
-  dateOfBirth: z.string().optional(),
-  email: z
-    .string()
-    .email('Invalid email address')
-    .nonempty('Email is required'),
-  contactNo: z.string().nonempty('Contact No is required'),
-  emergencyContactNo: z.string().nonempty('Emergency Contact No is required'),
-  bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
-    errorMap: () => ({ message: 'Blood group must be a valid type (e.g., A+, O-, etc.)' }),
-  }),
-  presentAddress: z.string().nonempty('Present Address is required'),
-  permanentAddress: z.string().nonempty('Permanent Address is required'),
-  gurdian: guardianValidationSchema,
-  localGurdian: localGuardianValidationSchema,
-  profileImg: z.string().optional(),
-  isActive: z.enum(['active', 'blocked']).default('active'),
-  isDeleted:z.boolean().default(false)
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    
+    password:z.string().max(20),
+    student:z.object({
+      name: userNameValidationSchema,
+    gender: z.enum(['male', 'female','other'], { errorMap: () => ({ message: 'Gender must be either "male" or "female"' }) }),
+    dateOfBirth: z.string().optional(),
+    email: z
+      .string()
+      .email('Invalid email address')
+      .nonempty('Email is required'),
+    contactNo: z.string().nonempty('Contact No is required'),
+    emergencyContactNo: z.string().nonempty('Emergency Contact No is required'),
+    bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
+      errorMap: () => ({ message: 'Blood group must be a valid type (e.g., A+, O-, etc.)' }),
+    }),
+    presentAddress: z.string().nonempty('Present Address is required'),
+    permanentAddress: z.string().nonempty('Permanent Address is required'),
+    gurdian: guardianValidationSchema,
+    localGurdian: localGuardianValidationSchema,
+    profileImg: z.string().optional(),
+    admissionSemester:z.string()
+    })
+  })
 });
 
-export { userNameValidationSchema, guardianValidationSchema, localGuardianValidationSchema, studentValidationSchema };
+export const studentValidations = { userNameValidationSchema, guardianValidationSchema, localGuardianValidationSchema,  createStudentValidationSchema };

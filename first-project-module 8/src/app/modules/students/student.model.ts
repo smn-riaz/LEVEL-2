@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import bcrypt from 'bcrypt'
+
 import {
   // StudentMethods,
   StudentModel,
@@ -7,10 +7,9 @@ import {
   TLocalGurdian,
   TStudent,
   TUserName,
-} from './students/student.interface';
+} from './student.interface';
 import validator from 'validator';
-import config from '../config';
-import { boolean } from 'joi';
+
 
 
 
@@ -64,7 +63,10 @@ const localGurdianSchema = new Schema<TLocalGurdian>({
 
 const studentSchema = new Schema<TStudent, StudentModel>({
   id: { type: String, required: true, unique: true },
-  password: { type: String, required: [true, "Password is required"], maxlength:[20, "Password cannot be more than 20"] },
+  user:{type:Schema.Types.ObjectId, required:[true, 'User is must'],
+    unique:true,
+    ref:'User'
+  },
   name: { type: userNameSchema, required: true },
   gender: {
     type: String,
@@ -74,7 +76,7 @@ const studentSchema = new Schema<TStudent, StudentModel>({
     },
     required: true,
   },
-  dateOfBirth: { type: String },
+  dateOfBirth: { type: Date },
   email: {
     type: String,
     required: true,
@@ -98,7 +100,7 @@ const studentSchema = new Schema<TStudent, StudentModel>({
   gurdian: { type: gurdianSchema, required: true },
   localGurdian: { type: localGurdianSchema, required: true },
   profileImg: { type: String },
-  isActive: { type: String, enum: ['active', 'blocked'], default: 'active' },
+  admissionSemester:{type: Schema.Types.ObjectId, ref: 'AcademicSemester'},
   isDeleted:{type:Boolean, default:false}
 }, {
   toJSON:{
@@ -122,27 +124,7 @@ studentSchema.virtual('fullName').get(function() {
 
 
 
-// pre save middleware / hook
-studentSchema.pre('save', async function(next){
-  // console.log(this, 'pre hook: we will save the data');
 
-  // hashing password and save into DB
-  const user = this
-  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_round))
-  
-next()
-})
-
-
-
-// post save middleware / hook
-studentSchema.post('save', function(doc, next){
-
-  doc.password = ''
- 
-
-  next()
-})
 
 
 
